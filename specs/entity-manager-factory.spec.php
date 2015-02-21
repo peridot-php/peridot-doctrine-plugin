@@ -25,5 +25,15 @@ describe('EntityManagerFactory', function () {
         it('should configure the mapping files', function () {
             expect($this->entityManager->getConfiguration()->getMetadataDriverImpl())->to->equal($this->mappingDriver);
         });
+
+        context('when providing custom connection information', function () {
+            it('should connect using the provided connection', function () {
+                $mappingDriver = new SimplifiedYamlDriver(sys_get_temp_dir());
+                $entityManager = $this->factory->create($mappingDriver, [
+                    'driver' => 'pdo_mysql'
+                ]);
+                expect($entityManager->getConnection()->getDriver()->getName())->to->equal('pdo_mysql');
+            });
+        });
     });
 });

@@ -12,16 +12,21 @@ use Doctrine\ORM\Tools\Setup;
  */
 class EntityManagerFactory
 {
-    public function create(MappingDriver $mappingDriver)
+    /**
+     * @param MappingDriver $mappingDriver
+     * @param array $connInfo
+     * @return EntityManager
+     */
+    public function create(MappingDriver $mappingDriver, array $connInfo = [])
     {
-        $dbParams = [
+        $connInfo = $connInfo ?: [
             'driver' => 'pdo_sqlite',
             'memory' => true,
         ];
 
         $configuration =  Setup::createConfiguration(true, sys_get_temp_dir() . '/' . uniqid());
         $configuration->setMetadataDriverImpl($mappingDriver);
-        $em = EntityManager::create($dbParams, $configuration, null);
+        $em = EntityManager::create($connInfo, $configuration, null);
 
         return $em;
     }
