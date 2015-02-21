@@ -38,11 +38,11 @@ class DoctrineScope extends Scope
      * @param EntityManagerFactory $factory
      * @param SchemaManager $schemaManager
      */
-    public function __construct(DoctrinePlugin $plugin, EntityManagerFactory $factory, SchemaManager $schemaManager)
+    public function __construct(DoctrinePlugin $plugin, EntityManagerFactory $factory/*, SchemaManager $schemaManager*/)
     {
         $this->plugin = $plugin;
         $this->factory = $factory;
-        $this->schemaManager = $schemaManager;
+        //$this->schemaManager = $schemaManager;
     }
 
     /**
@@ -56,7 +56,7 @@ class DoctrineScope extends Scope
                 $this->plugin->getConnectionInfo()
             );
 
-            $this->schemaManager->createSchema($this->entityManager);
+//            $this->schemaManager->createSchema($this->entityManager);
         }
 
         return $this->entityManager;
