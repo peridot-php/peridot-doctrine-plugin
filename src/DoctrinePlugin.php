@@ -41,6 +41,11 @@ class DoctrinePlugin
         $this->connectionInfo = $connInfo;
 
         $this->listen();
+
+        $this->scope = new DoctrineScope(
+            $this,
+            new EntityManagerFactory()
+        );
     }
 
     /**
@@ -48,13 +53,12 @@ class DoctrinePlugin
      */
     public function onSuiteStart(Suite $suite)
     {
-        $suite->getScope()->peridotAddChildScope(
-            new DoctrineScope(
-                $this,
-                new EntityManagerFactory(),
-                new SchemaManager()
-            )
-        );
+        $suite->getScope()->peridotAddChildScope($this->scope);
+    }
+
+    public function emit($event, $data)
+    {
+        $this->emitter->emit($event, $data);
     }
 
     /**

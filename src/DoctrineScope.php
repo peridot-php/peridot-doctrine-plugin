@@ -29,20 +29,13 @@ class DoctrineScope extends Scope
     private $plugin;
 
     /**
-     * @var SchemaManager
-     */
-    private $schemaManager;
-
-    /**
      * @param DoctrinePlugin $plugin
      * @param EntityManagerFactory $factory
-     * @param SchemaManager $schemaManager
      */
-    public function __construct(DoctrinePlugin $plugin, EntityManagerFactory $factory/*, SchemaManager $schemaManager*/)
+    public function __construct(DoctrinePlugin $plugin, EntityManagerFactory $factory)
     {
         $this->plugin = $plugin;
         $this->factory = $factory;
-        //$this->schemaManager = $schemaManager;
     }
 
     /**
@@ -56,22 +49,23 @@ class DoctrineScope extends Scope
                 $this->plugin->getConnectionInfo()
             );
 
-//            $this->schemaManager->createSchema($this->entityManager);
+            $this->rebuildSchema();
+
+            $this->plugin->emit('entitymanager.created', [$this->entityManager]);
         }
 
         return $this->entityManager;
     }
 
-//    public function rebuildSchema()
-//    {
-//        $entityManager = $this->getEntityManager();
-//
-//        $schemaTool = new SchemaTool($this->entityManager);
-//
-//        $classMetadataFactory = $entityManager->getMetadataFactory();
-//        $classMetadata = $classMetadataFactory->getAllMetadata();
-//
-//        $schemaTool->dropDatabase();
-//        $schemaTool->createSchema($classMetadata);
-//    }
+    protected function rebuildSchema()
+    {
+        $entityManager = $this->getEntityManager();
+        $schemaTool = new SchemaTool($entityManager);
+
+        $classMetadataFactory = $entityManager->getMetadataFactory();
+        $classMetadata = $classMetadataFactory->getAllMetadata();
+
+        $schemaTool->dropDatabase();
+        $schemaTool->createSchema($classMetadata);
+    }
 }
