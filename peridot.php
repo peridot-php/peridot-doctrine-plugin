@@ -4,11 +4,10 @@ use Evenement\EventEmitterInterface;
 use Peridot\Console\Environment;
 use Peridot\Plugin\Prophecy\ProphecyPlugin;
 
-return function (EventEmitterInterface $emitter) {
-    $emitter->on('peridot.start', function (Environment $env) {
-        $definition = $env->getDefinition();
-        $definition->getArgument('path')->setDefault('specs');
+return function (EventEmitterInterface $eventEmitter) {
+    $eventEmitter->on('peridot.start', function (Environment $environment) {
+        $environment->getDefinition()->getArgument('path')->setDefault('specs');
     });
 
-    new ProphecyPlugin($emitter);
+    new ProphecyPlugin($eventEmitter);
 };

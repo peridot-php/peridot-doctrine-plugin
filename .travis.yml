@@ -6,14 +6,16 @@ php:
   - 5.4
   - hhvm
   - hhvm-nightly
+  - 7
 
 install:
     - composer install --prefer-source
 
-script: vendor/bin/peridot specs/
+script: vendor/bin/peridot
 
 matrix:
   fast_finish: true
   allow_failures:
     - php: hhvm
     - php: hhvm-nightly
+    - php: 7
