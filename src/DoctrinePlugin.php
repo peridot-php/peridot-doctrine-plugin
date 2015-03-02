@@ -2,11 +2,9 @@
 
 namespace Peridot\Plugin\Doctrine;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
-use Doctrine\ORM\Tools\SchemaTool;
 use Evenement\EventEmitterInterface;
 use Peridot\Core\Suite;
+use Peridot\Plugin\Doctrine\EntityManager\EntityManagerService;
 
 /**
  * Class DoctrinePlugin
@@ -15,37 +13,26 @@ use Peridot\Core\Suite;
 class DoctrinePlugin
 {
     /**
-     * @var EventEmitterInterface
+     * @var \Evenement\EventEmitterInterface
      */
-    private $emitter;
+    protected $eventEmitter;
 
     /**
-     * @var MappingDriver
+     * @var \Peridot\Plugin\Doctrine\DoctrineScope
      */
-    private $driver;
+    protected $scope;
 
     /**
-     * @var array
+     * Constructor.
+     *
+     * @param EventEmitterInterface $eventEmitter
+     * @param EntityManagerService $entityManagerService
      */
-    private $connectionInfo;
-
-    /**
-     * @param EventEmitterInterface $emitter
-     * @param MappingDriver $driver
-     * @param array $connInfo
-     */
-    public function __construct(EventEmitterInterface $emitter, MappingDriver $driver, array $connInfo = [])
+    public function __construct(EventEmitterInterface $eventEmitter, EntityManagerService $entityManagerService)
     {
-        $this->emitter = $emitter;
-        $this->driver = $driver;
-        $this->connectionInfo = $connInfo;
-
+        $this->eventEmitter = $eventEmitter;
+        $this->scope = new DoctrineScope($entityManagerService->setEventEmitter($this->eventEmitter));
         $this->listen();
-
-        $this->scope = new DoctrineScope(
-            $this,
-            new EntityManagerFactory()
-        );
     }
 
     /**
@@ -56,29 +43,11 @@ class DoctrinePlugin
         $suite->getScope()->peridotAddChildScope($this->scope);
     }
 
-    public function emit($event, $data)
-    {
-        $this->emitter->emit($event, $data);
-    }
-
     /**
-     * @return MappingDriver
+     * Listen for Peridot events.
      */
-    public function getMappingDriver()
-    {
-        return $this->driver;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConnectionInfo()
-    {
-        return $this->connectionInfo;
-    }
-
     private function listen()
     {
-        $this->emitter->on('suite.start', [$this, 'onSuiteStart']);
+        $this->eventEmitter->on('suite.start', [$this, 'onSuiteStart']);
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Peridot\Plugin\Doctrine;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\ORM\Tools\SchemaTool;
-use Nelmio\Alice\Fixtures;
+use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Peridot\Plugin\Doctrine\EntityManager\EntityManagerService;
 use Peridot\Scope\Scope;
 
 /**
@@ -14,58 +13,25 @@ use Peridot\Scope\Scope;
 class DoctrineScope extends Scope
 {
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var \Peridot\Plugin\Doctrine\EntityManager\EntityManagerService
      */
-    private $entityManager;
+    private $entityManagerService;
 
     /**
-     * @var EntityManagerFactory
+     * Constructor.
+     *
+     * @param EntityManagerService $entityManagerService
      */
-    private $factory;
-
-    /**
-     * @var DoctrinePlugin
-     */
-    private $plugin;
-
-    /**
-     * @param DoctrinePlugin $plugin
-     * @param EntityManagerFactory $factory
-     */
-    public function __construct(DoctrinePlugin $plugin, EntityManagerFactory $factory)
+    public function __construct(EntityManagerService $entityManagerService)
     {
-        $this->plugin = $plugin;
-        $this->factory = $factory;
+        $this->entityManagerService = $entityManagerService;
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return DoctrineEntityManager
      */
-    public function getEntityManager()
+    public function createEntityManager()
     {
-        if (!$this->entityManager) {
-            $this->entityManager = $this->factory->create(
-                $this->plugin->getMappingDriver(),
-                $this->plugin->getConnectionInfo()
-            );
-
-            $this->rebuildSchema();
-
-            $this->plugin->emit('entitymanager.created', [$this->entityManager]);
-        }
-
-        return $this->entityManager;
-    }
-
-    protected function rebuildSchema()
-    {
-        $entityManager = $this->getEntityManager();
-        $schemaTool = new SchemaTool($entityManager);
-
-        $classMetadataFactory = $entityManager->getMetadataFactory();
-        $classMetadata = $classMetadataFactory->getAllMetadata();
-
-        $schemaTool->dropDatabase();
-        $schemaTool->createSchema($classMetadata);
+        return $this->entityManagerService->createEntityManager();
     }
 }

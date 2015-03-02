@@ -4,24 +4,21 @@ use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
 use Evenement\EventEmitter;
 use Peridot\Core\Suite;
 use Peridot\Plugin\Doctrine\DoctrinePlugin;
-use Prophecy\Prophet;
+use Peridot\Plugin\Doctrine\EntityManager\EntityManagerService;
 
-require_once __DIR__ . '/entities/Customer.php';
-
-describe('DoctrinePlugin', function () {
+describe('Peridot\Plugin\Doctrine\DoctrinePlugin', function () {
     beforeEach(function () {
-        $this->emitter = new EventEmitter();
-        $this->plugin = new DoctrinePlugin(
-            $this->emitter,
-            new SimplifiedYamlDriver([__DIR__ . '/mapping' => 'Peridot\Plugin\Doctrine\Entity'])
-        );
+        $this->entityManagerService = (new EntityManagerService())->setMappingDriver(new SimplifiedYamlDriver([]));
+        $this->eventEmitter = new EventEmitter();
+        $this->plugin = new DoctrinePlugin($this->eventEmitter, $this->entityManagerService);
     });
 
-    context('when suite.start event fires', function() {
-        it('should set add the doctrine scope to the child scope', function() {
-            $suite = new Suite('suite', function() {});
-            $this->emitter->emit('suite.start', [$suite]);
-            $entityManager = $suite->getScope()->getEntityManager();
+    describe('->onSuiteStart()', function () {
+        it('should add the doctrine scope to the child scope', function() {
+            $suite = new Suite('my suite', ['foo', 'bar']);
+            $this->eventEmitter->emit('suite.start', [$suite]);
+            $entityManager = $suite->getScope()->createEntityManager();
+
             expect($entityManager)->to->be->instanceof('Doctrine\ORM\EntityManager');
         });
     });
