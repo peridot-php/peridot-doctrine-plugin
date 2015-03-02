@@ -131,9 +131,7 @@ class EntityManagerService
         $this->proxyDir = $proxyDir;
         return $this;
     }
-
-
-
+    
     /**
      * @return DoctrineEntityManager
      * @throws \Doctrine\ORM\ORMException
