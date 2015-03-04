@@ -1,0 +1,29 @@
+{
+  "name": "peridot-php/peridot-doctrine-plugin",
+  "description": "A Doctrine ORM plugin for Peridot BDD testing framework.",
+  "keywords": ["PHP", "Peridot", "BDD", "testing", "Doctrine", "ORM"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Austin Morris",
+      "email": "austin.morris@gmailc.om"
+    },
+    {
+      "name": "Kristopher Wilson",
+      "email": "kristopherwilson@gmail.com"
+    }
+  ],
+  "require": {
+    "peridot-php/peridot": "~1.14",
+    "doctrine/orm": "~2.4"
+  },
+  "require-dev": {
+    "peridot-php/leo": "~1.3.0",
+    "peridot-php/peridot-prophecy-plugin": "~1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Peridot\\Plugin\\Doctrine\\": "src/"
+    }
+  }
+}
