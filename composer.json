@@ -1,6 +1,6 @@
 {
   "name": "peridot-php/peridot-doctrine-plugin",
-  "description": "A Doctrine ORM plugin for Peridot BDD testing framework.",
+  "description": "A Doctrine ORM plugin for the Peridot BDD testing framework.",
   "keywords": ["PHP", "Peridot", "BDD", "testing", "Doctrine", "ORM"],
   "license": "MIT",
   "authors": [
